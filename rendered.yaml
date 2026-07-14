@@ -1,0 +1,74 @@
+---
+# Source: risk-api-chart/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: risk-api-demo-risk-api-chart
+  labels:
+    helm.sh/chart: risk-api-chart-0.1.0
+    app.kubernetes.io/name: risk-api-chart
+    app.kubernetes.io/instance: risk-api-demo
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: risk-api-chart
+    app.kubernetes.io/instance: risk-api-demo
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8000
+      targetPort: 8000
+
+---
+# Source: risk-api-chart/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: risk-api-demo-risk-api-chart
+  labels:
+    helm.sh/chart: risk-api-chart-0.1.0
+    app.kubernetes.io/name: risk-api-chart
+    app.kubernetes.io/instance: risk-api-demo
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: risk-api-chart
+      app.kubernetes.io/instance: risk-api-demo
+  template:
+    metadata:
+      labels:
+        helm.sh/chart: risk-api-chart-0.1.0
+        app.kubernetes.io/name: risk-api-chart
+        app.kubernetes.io/instance: risk-api-demo
+        app.kubernetes.io/version: "1.16.0"
+        app.kubernetes.io/managed-by: Helm
+    spec:
+      serviceAccountName: risk-api-demo-risk-api-chart
+      containers:
+        - name: risk-api-chart
+          image: "python-risk-api:1.0"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            limits:
+              cpu: 250m
+              memory: 128Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi
