@@ -39,6 +39,9 @@ spec:
           {{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "risk-api-chart.fullname" . }}-config
           ports:
             - name: http
               containerPort: {{ .Values.containerPort }}
