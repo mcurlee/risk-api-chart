@@ -42,6 +42,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "risk-api-chart.fullname" . }}-config
+            - secretRef:
+                name: {{ include "risk-api-chart.fullname" . }}-secret
           ports:
             - name: http
               containerPort: {{ .Values.containerPort }}
